@@ -1,6 +1,7 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -8,6 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 
 /**
@@ -52,7 +56,8 @@ public class InventoryDAO {
    */
   public Inventory create(Inventory inventory) {
     // TODO
-    return null;
+    inventory.setId(null);
+    return this.mongoTemplate.save(inventory);
   }
 
   /**
@@ -62,7 +67,11 @@ public class InventoryDAO {
    */
   public Optional<Inventory> retrieve(String id) {
     // TODO
-    return Optional.empty();
+    /*
+     * test this!!!
+     */
+    return Optional.ofNullable(this.mongoTemplate.findById(id, Inventory.class));
+     
   }
 
   /**
@@ -73,16 +82,40 @@ public class InventoryDAO {
    */
   public Optional<Inventory> update(String id, Inventory inventory) {
     // TODO
-    return Optional.empty();
+    /*
+     * test??
+     * wow u can prob do better
+     * set?
+     * neverExpires?
+     * does it delete the old one? 
+     * very flimsy; look later if theres problems
+     */
+    Update invUpdate = new Update();
+    invUpdate.set("name", inventory.getName());
+    invUpdate.set("productType", inventory.getProductType());
+    invUpdate.set("description", inventory.getDescription());
+    invUpdate.set("averagePrice", inventory.getAveragePrice());
+    invUpdate.set("amount", inventory.getAmount());
+    invUpdate.set("unitOfMeasurement", inventory.getUnitOfMeasurement());
+    invUpdate.set("bestBeforeDate", inventory.getBestBeforeDate());
+
+    this.mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), invUpdate, Inventory.class);
+    Inventory invToUpdate = retrieve(id).get();
+    return Optional.of(invToUpdate);
+
   }
 
   /**
    * Delete Inventory By Id.
-   * @param id Id of Inventory.
+   * @param ids Id of Inventory.
    * @return Deleted Inventory.
    */
-  public Optional<Inventory> delete(String id) {
+  public Optional<List<Inventory>> delete(String[] ids) {
     // TODO
-    return Optional.empty();
+    List<Inventory> retList = new ArrayList<>();
+    for (int i = 0; i < ids.length; i++) {
+      retList.add(this.mongoTemplate.findAndRemove(new Query(Criteria.where("id").is(ids[i])), Inventory.class));
+    }
+    return Optional.ofNullable(retList);
   }
 }
