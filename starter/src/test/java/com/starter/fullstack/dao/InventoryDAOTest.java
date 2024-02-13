@@ -1,6 +1,7 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import org.junit.After;
@@ -85,7 +86,9 @@ public class InventoryDAOTest {
 
     
     Assert.assertEquals(2, this.mongoTemplate.findAll(Inventory.class).size());
-    String[] ids = {inventory1.getId(), inventory2.getId()};
+    List<String> ids = new ArrayList<>();
+    ids.add(inventory1.getId());
+    ids.add(inventory2.getId());
     this.inventoryDAO.delete(ids);
     Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
 

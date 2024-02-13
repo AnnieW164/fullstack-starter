@@ -59,7 +59,7 @@ public class InventoryController {
    * @return Deleted inventory
    */
   @DeleteMapping
-  public Optional<List<Inventory>> deleteInventoryById(@RequestBody String[] ids) {
+  public Optional<List<Inventory>> deleteInventoryById(@RequestBody List<String> ids) {
     return this.inventoryDAO.delete(ids);
   }
 

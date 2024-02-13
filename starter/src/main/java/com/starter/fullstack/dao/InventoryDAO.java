@@ -55,7 +55,6 @@ public class InventoryDAO {
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    // TODO
     inventory.setId(null);
     return this.mongoTemplate.save(inventory);
   }
@@ -66,12 +65,7 @@ public class InventoryDAO {
    * @return Found Inventory.
    */
   public Optional<Inventory> retrieve(String id) {
-    // TODO
-    /*
-     * test this!!!
-     */
     return Optional.ofNullable(this.mongoTemplate.findById(id, Inventory.class));
-     
   }
 
   /**
@@ -82,14 +76,6 @@ public class InventoryDAO {
    */
   public Optional<Inventory> update(String id, Inventory inventory) {
     // TODO
-    /*
-     * test??
-     * wow u can prob do better
-     * set?
-     * neverExpires?
-     * does it delete the old one? 
-     * very flimsy; look later if theres problems
-     */
     Update invUpdate = new Update();
     invUpdate.set("name", inventory.getName());
     invUpdate.set("productType", inventory.getProductType());
@@ -110,11 +96,10 @@ public class InventoryDAO {
    * @param ids Id of Inventory.
    * @return Deleted Inventory.
    */
-  public Optional<List<Inventory>> delete(String[] ids) {
-    // TODO
+  public Optional<List<Inventory>> delete(List<String> ids) {
     List<Inventory> retList = new ArrayList<>();
-    for (int i = 0; i < ids.length; i++) {
-      retList.add(this.mongoTemplate.findAndRemove(new Query(Criteria.where("id").is(ids[i])), Inventory.class));
+    for (int i = 0; i < ids.size(); i++) {
+      retList.add(this.mongoTemplate.findAndRemove(new Query(Criteria.where("id").is(ids.get(i))), Inventory.class));
     }
     return Optional.ofNullable(retList);
   }
