@@ -64,6 +64,15 @@ const InventoryLayout = (props) => {
     units.push(key)
   })
 
+  // handling edit initialization of productType, if productType was deleted/edited
+  const productCheck = (product) => {
+    if (products.indexOf(product) === -1) {
+      return ''
+    } else {
+      return product
+    }
+  }
+
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
@@ -200,9 +209,11 @@ const InventoryLayout = (props) => {
           idToUpdate= {null}
           initialValues={{
             name: '',
+            productType: '',
             description:'',
             averagePrice:0,
             amount:0,
+            unitOfMeasurement: '',
             bestBeforeDate: moment().format('YYYY-MM-DD'),
             neverExpires: false
           }}
@@ -218,7 +229,7 @@ const InventoryLayout = (props) => {
           idToUpdate= {selected[0]}
           initialValues={{
             name: getInvById(selected[0])?.name,
-            productType: getInvById(selected[0])?.productType,
+            productType: productCheck(getInvById(selected[0])?.productType),
             description: getInvById(selected[0])?.description,
             averagePrice: getInvById(selected[0])?.averagePrice,
             amount: getInvById(selected[0])?.amount,

@@ -84,10 +84,8 @@ class InventoryFormModal extends React.Component {
                       label='Product Type'
                       component={TextField}
                       select
-                      defaultValue={'DEFAULT'}
                       required
                     >
-                      <MenuItem value='DEFAULT' disabled>Choose a product type </MenuItem>
                       {currProducts.map(product =>
                         <MenuItem value={product.name}>{product.name}</MenuItem>
                       )};
@@ -129,9 +127,7 @@ class InventoryFormModal extends React.Component {
                       component={TextField}
                       select
                       required
-                      defaultValue={'DEFAULT'}
                     >
-                      <MenuItem value='DEFAULT' disabled>Choose a unit</MenuItem>
                       {units.map(unit =>
                         <MenuItem value={unit}>{unit}</MenuItem>
                       )};
