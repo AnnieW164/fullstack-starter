@@ -66,13 +66,14 @@ const InventoryLayout = (props) => {
 
   // handling edit initialization of productType, if productType was deleted/edited
   const productCheck = (product) => {
-    if (products.indexOf(product) === -1) {
-      return ''
-    } else {
-      return product
-    }
+    let retVal = ''
+    products.forEach(element => {
+      if (element.name === product) {
+        retVal = product
+      }
+    })
+    return retVal
   }
-
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
@@ -124,7 +125,7 @@ const InventoryLayout = (props) => {
     setSelected([])
   }
 
-  const handleClick = (event, id) => { // i changed this from id to inv --
+  const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id)
     let newSelected = []
     if (selectedIndex === -1) {
@@ -143,7 +144,7 @@ const InventoryLayout = (props) => {
   }
 
 
-  const isSelected = (id) => selected.indexOf(id) !== -1 //
+  const isSelected = (id) => selected.indexOf(id) !== -1
 
   return (
     <Grid container>
