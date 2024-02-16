@@ -99,20 +99,26 @@ public class InventoryDAOTest {
    */
   @Test
   public void update() {
+
+    Assert.assertEquals(this.mongoTemplate.findAll(Inventory.class).size(), 0);
+
     Inventory inventory1 = new Inventory();
     inventory1.setName("Annie");
-    inventory1.setProductType(PRODUCT_TYPE);
+    inventory1.setProductType("popcorn");
     this.inventoryDAO.create(inventory1);
-    String id1 = inventory1.getId();
+    String id = inventory1.getId();
 
     Inventory inventory2 = new Inventory();
     inventory2.setName("Leah");
-    inventory2.setProductType(PRODUCT_TYPE);
+    inventory2.setProductType("cookie");
 
-    Inventory inventory3 = this.inventoryDAO.update(id1, inventory2).get();
 
-    Assert.assertEquals(inventory3.getName(), inventory2.getName());
-    Assert.assertEquals(id1, inventory3.getId());
+    Assert.assertEquals(this.mongoTemplate.findById(inventory1.getId(), Inventory.class).getName(), "Annie");
+    this.inventoryDAO.update(inventory1.getId(), inventory2).get();
+    Assert.assertEquals(this.mongoTemplate.findById(id, Inventory.class).getName(), "Leah");
+    Assert.assertEquals(this.mongoTemplate.findById(id, Inventory.class).getProductType(), "cookie");
+    Assert.assertEquals(inventory1.getId(), id);
+    Assert.assertEquals(this.mongoTemplate.findAll(Inventory.class).size(), 1);
   }
 
 }

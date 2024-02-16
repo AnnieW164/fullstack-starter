@@ -33,6 +33,7 @@ class InventoryFormModal extends React.Component {
       handleDialog,
       handleInventory,
       title,
+      idToUpdate,
       initialValues,
       currProducts,
       units
@@ -50,7 +51,11 @@ class InventoryFormModal extends React.Component {
           onSubmit={values => {
             values.neverExpires = document.getElementById('neverExpires').checked
             values.bestBeforeDate = new moment(values.bestBeforeDate).toJSON()
-            handleInventory(values)
+            if (idToUpdate !== null) {
+              handleInventory(idToUpdate, values)
+            } else {
+              handleInventory(values)
+            }
             handleDialog(true)
           }}>
           {helpers =>

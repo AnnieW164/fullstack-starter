@@ -1,6 +1,5 @@
 import * as inventoryDuck from '../ducks/inventory'
 import * as productDuck from '../ducks/products'
-import Avatar from '@material-ui/core/Avatar'
 import Checkbox from '@material-ui/core/Checkbox'
 import Grid from '@material-ui/core/Grid'
 import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
@@ -56,6 +55,9 @@ const InventoryLayout = (props) => {
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+  const updateInventory = useCallback((id, inventory)=> { dispatch(inventoryDuck.updateInventory(id, inventory)) }, [dispatch])
+
+  const getInvById = (id) => inventory.find((inv) => inv.id === id)
 
   const units = []
   Object.entries(MeasurementUnits).forEach(([key, value]) => {
@@ -113,7 +115,7 @@ const InventoryLayout = (props) => {
     setSelected([])
   }
 
-  const handleClick = (event, id) => {
+  const handleClick = (event, id) => { // i changed this from id to inv --
     const selectedIndex = selected.indexOf(id)
     let newSelected = []
     if (selectedIndex === -1) {
@@ -131,7 +133,8 @@ const InventoryLayout = (props) => {
     setSelected(newSelected)
   }
 
-  const isSelected = (id) => selected.indexOf(id) !== -1
+
+  const isSelected = (id) => selected.indexOf(id) !== -1 //
 
   return (
     <Grid container>
@@ -194,6 +197,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isCreateOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
+          idToUpdate= {null}
           initialValues={{
             name: '',
             description:'',
@@ -210,8 +214,18 @@ const InventoryLayout = (props) => {
           formName='inventoryEdit'
           isDialogOpen={isEditOpen}
           handleDialog={toggleModals}
-          handleInventory={saveInventory}
-          initialValues={{}}
+          handleInventory={updateInventory}
+          idToUpdate= {selected[0]}
+          initialValues={{
+            name: getInvById(selected[0])?.name,
+            productType: getInvById(selected[0])?.productType,
+            description: getInvById(selected[0])?.description,
+            averagePrice: getInvById(selected[0])?.averagePrice,
+            amount: getInvById(selected[0])?.amount,
+            unitOfMeasurement: getInvById(selected[0])?.unitOfMeasurement,
+            bestBeforeDate: moment(getInvById(selected[0])?.bestBeforeDate).format('YYYY-MM-DD'),
+            neverExpires: getInvById(selected[0])?.neverExpires
+          }}
           currProducts = {products}
           units = {units}
         />

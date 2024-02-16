@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
@@ -70,25 +71,24 @@ public class InventoryDAO {
 
   /**
    * Update Inventory.
-   * @param id Inventory id to Update.
+   * @param id id to update
    * @param inventory Inventory to Update.
    * @return Updated Inventory.
    */
   public Optional<Inventory> update(String id, Inventory inventory) {
-    // TODO
-    Update invUpdate = new Update();
-    invUpdate.set("name", inventory.getName());
-    invUpdate.set("productType", inventory.getProductType());
-    invUpdate.set("description", inventory.getDescription());
-    invUpdate.set("averagePrice", inventory.getAveragePrice());
-    invUpdate.set("amount", inventory.getAmount());
-    invUpdate.set("unitOfMeasurement", inventory.getUnitOfMeasurement());
-    invUpdate.set("bestBeforeDate", inventory.getBestBeforeDate());
+    Update updateDef = new Update();
+    updateDef.set("name", inventory.getName());
+    updateDef.set("productType", inventory.getProductType());
+    updateDef.set("description", inventory.getDescription());
+    updateDef.set("averagePrice", inventory.getAveragePrice());
+    updateDef.set("amount", inventory.getAmount());
+    updateDef.set("unitOfMeasurement", inventory.getUnitOfMeasurement());
+    updateDef.set("bestBeforeDate", inventory.getBestBeforeDate());
+    
+    FindAndModifyOptions findAndModifyOptions = FindAndModifyOptions.options().returnNew(true);
 
-    this.mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), invUpdate, Inventory.class);
-    Inventory invToUpdate = retrieve(id).get();
-    return Optional.of(invToUpdate);
-
+    return Optional.ofNullable(this.mongoTemplate.findAndModify(
+      new Query(Criteria.where("id").is(id)), updateDef, findAndModifyOptions, Inventory.class));
   }
 
   /**
